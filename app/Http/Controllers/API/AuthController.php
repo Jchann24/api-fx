@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -22,7 +23,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        //validate incoming request 
+        //validate incoming request
         $this->validate($request, [
             'name' => 'required|string',
             'username' => 'required|string|unique:users',
@@ -41,11 +42,9 @@ class AuthController extends Controller
 
             $user->save();
 
-            //return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
 
         } catch (\Exception $e) {
-            //return error message
             return response()->json(['message' => 'User Registration Failed!'], 409);
         }
 
@@ -59,7 +58,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-          //validate incoming request 
+        //validate incoming request
         $this->validate($request, [
             'username' => 'required|string',
             'password' => 'required|string',
@@ -67,7 +66,7 @@ class AuthController extends Controller
 
         $credentials = $request->only(['username', 'password']);
 
-        if (! $token = Auth::attempt($credentials)) {
+        if (!$token = Auth::attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -76,7 +75,8 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        $user = auth()->user();
+        return new UserResource($user);
     }
 
     public function logout()

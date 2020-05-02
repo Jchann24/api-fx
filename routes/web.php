@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
@@ -19,33 +18,19 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
-    // Matches "/api/register
     $router->post('register', 'API\AuthController@register');
-
-    // Matches "/api/login
     $router->post('login', 'API\AuthController@login');
 
 });
 
 $router->group([
     'middleware' => 'auth',
-    'prefix' => 'api'
-
+    'prefix' => 'api',
 ], function () use ($router) {
-
     $router->get('me', 'API\AuthController@me');
     $router->post('logout', 'API\AuthController@logout');
-
 });
 
 // $router->get('/key', function() {
 //     return \Illuminate\Support\Str::random(32);
 // });
-
-// $router->get('/post/{id}', ['middleware' => 'auth', function (Request $request, $id) {
-//     $user = Auth::user();
-
-//     $user = $request->user();
-
-//     //
-// }]);
